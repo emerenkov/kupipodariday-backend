@@ -13,7 +13,7 @@ export abstract class DefaultEntity {
 
     @CreateDateColumn()
     @IsDate()
-    createdAT: Date;
+    createdAt: Date;
 
     @UpdateDateColumn()
     @IsDate()
