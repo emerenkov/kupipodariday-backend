@@ -1,32 +1,37 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from "@nestjs/typeorm";
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import configuration from './configuration/configuration';
+
+import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { WishesModule } from './wishes/wishes.module';
-import { WishlistsModule } from './wishlists/wishlists.module';
 import { OffersModule } from './offers/offers.module';
-import { User } from "./users/entities/user.entity";
-import { Wish } from "./wishes/entities/wish.entity";
-import { Wishlist } from "./wishlists/entities/wishlist.entity";
-import { Offer } from "./offers/entities/offer.entity";
+import { WishlistsModule } from './wishlists/wishlists.module';
 import { AuthModule } from './auth/auth.module';
+
+import { User } from './users/entities/user.entity';
+import { Offer } from './offers/entities/offer.entity';
+import { Wish } from './wishes/entities/wish.entity';
+import { Wishlist } from './wishlists/entities/wishlist.entity';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ load: [configuration] }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'student',
-      password: 'student',
-      database: 'kupipodariday',
-      schema: 'kupipodariday',
+      host: configuration().database.host,
+      port: configuration().database.port,
+      username: configuration().database.username,
+      password: configuration().database.password,
+      database: configuration().database.database,
       entities: [User, Wish, Offer, Wishlist],
-      synchronize: true,
+      synchronize: configuration().database.synchronize,
     }),
     UsersModule,
+    OffersModule,
     WishesModule,
     WishlistsModule,
-    OffersModule,
     AuthModule,
   ],
 })
