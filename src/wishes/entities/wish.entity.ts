@@ -1,6 +1,7 @@
 import { DefaultEntity } from "../../utils/default.entity";
 import {
     Column,
+    Entity,
     JoinColumn,
     ManyToOne
 } from "typeorm";
@@ -15,6 +16,7 @@ import {
 import { User } from "../../users/entities/user.entity";
 import {Offer} from "../../offers/entities/offer.entity";
 
+@Entity()
 export class Wish extends DefaultEntity {
     @Column()
     @IsString()

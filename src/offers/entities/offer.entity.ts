@@ -1,9 +1,18 @@
-import {DefaultEntity} from "../../utils/default.entity";
-import {Column, ManyToOne} from "typeorm";
-import {IsBoolean, IsNotEmpty, NotEquals} from "class-validator";
-import {User} from "../../users/entities/user.entity";
-import {Wish} from "../../wishes/entities/wish.entity";
+import {
+    Column,
+    Entity,
+    ManyToOne
+} from "typeorm";
+import {
+    IsBoolean,
+    IsNotEmpty,
+    NotEquals
+} from "class-validator";
+import { DefaultEntity } from "../../utils/default.entity";
+import { User } from "../../users/entities/user.entity";
+import { Wish } from "../../wishes/entities/wish.entity";
 
+@Entity()
 export class Offer extends DefaultEntity {
 
     @Column({

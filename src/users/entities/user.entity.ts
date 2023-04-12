@@ -1,4 +1,3 @@
-import { DefaultEntity } from "../../utils/default.entity";
 import {
     IsEmail,
     IsEmpty,
@@ -12,11 +11,15 @@ import {
 } from "class-validator";
 import {
     Column,
+    Entity,
     OneToMany
 } from "typeorm";
-import {Wish} from "../../wishes/entities/wish.entity";
-import {Offer} from "../../offers/entities/offer.entity";
+import { DefaultEntity } from "../../utils/default.entity";
+import { Wish } from "../../wishes/entities/wish.entity";
+import { Offer } from "../../offers/entities/offer.entity";
+import { Wishlist } from "../../wishlists/entities/wishlist.entity";
 
+@Entity()
 export class User extends DefaultEntity {
     @Column({unique: true})
     @IsString()
@@ -52,8 +55,8 @@ export class User extends DefaultEntity {
     @IsEmpty()
     @OneToMany(() => Offer, (offer) => offer.user)
     offers: Array<Offer>;
-    //
-    // @IsEmpty()
-    // @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
-    // wishlists: Array<Wishlist>;
+
+    @IsEmpty()
+    @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+    wishlists: Array<Wishlist>;
 }
