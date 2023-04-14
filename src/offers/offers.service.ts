@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateOfferDto } from './dto/create-offer.dto';
@@ -29,21 +29,27 @@ export class OffersService {
       user: User,
       createOfferDto: CreateOfferDto,
   ): Promise<Offer> {
-    const wish = await this.wishesService.findWishById(createOfferDto.itemId);
-    if (createOfferDto.amount < 0) {
+    const { itemId, amount, hidden } = createOfferDto;
+    const wish = await this.wishesService.findOne(itemId);
+
+    if (!wish) {
+      throw new NotFoundException('Заявка с таким id не найдена');
+    }
+
+    const newAmount = wish.raised + amount;
+
+    if (amount < 0) {
       throw new BadRequestException('Cумма должна быть больше 0');
     }
     if (user.id === wish.owner.id) {
       throw new BadRequestException('Не получится скинуться самому себе');
     }
-    if (createOfferDto.amount > wish.price - wish.raised) {
+    if (amount > wish.price - wish.raised) {
       throw new BadRequestException(
           'Сумма собранных средств не может превышать стоимость подарка',
       );
     }
-    await this.wishesService.updateWish(wish.id, {
-      raised: wish.raised + createOfferDto.amount,
-    });
+    await this.wishesService.raiseAmount(itemId, newAmount)
     const offer = this.offersRepository.create({
       ...createOfferDto,
       user,
