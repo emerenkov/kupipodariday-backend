@@ -16,7 +16,7 @@ import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { Wishlist } from './entities/wishlist.entity';
-import { User } from 'src/users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
 import { WishInterceptor } from '../utils/interceptors/wish.interceptors';
 
 @UseInterceptors(WishInterceptor)
@@ -31,29 +31,25 @@ export class WishlistsController {
   }
 
   @Post()
-  async createWishlist(
+  createWishlist(
       @Req() req,
       @Body() createWishlistDto: CreateWishlistDto,
-  ): Promise<Wishlist> {
+  ) {
     return this.wishlistsService.createWishlist(req.user, createWishlistDto);
   }
 
   @Get(':id')
-  async findWishlistById(@Param('id') id: number): Promise<Wishlist> {
-    const wishlist = await this.wishlistsService.findWishlistById(id);
-    if (!wishlist) {
-      throw new NotFoundException('Не найдено');
-    }
-    return wishlist;
+  findWishlistById(@Param('id') id: number) {
+    return this.wishlistsService.findOne(id);
   }
 
   @Patch(':id')
   updateWishlistById(
-      @Req() { user }: { user: User },
+      @Req() req,
       @Param('id') id: number,
       @Body() updateWishlistDto: UpdateWishlistDto,
-  ): Promise<Wishlist> {
-    return this.wishlistsService.updateWishlist(id, updateWishlistDto, user.id);
+  ) {
+    return this.wishlistsService.updateWishlist(id, req.user, updateWishlistDto);
   }
 
   @Delete(':id')

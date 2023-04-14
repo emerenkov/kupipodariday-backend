@@ -27,18 +27,18 @@ export class UsersController {
   ) {}
 
   @Get('me')
-  async getMyProfile(@Req() req): Promise<User> {
+  getMyProfile(@Req() req): Promise<User> {
     return this.usersService.findUserById(req.user.id);
   }
 
   @Get(':username')
-  async findUserByUsername(@Param('username') username: string): Promise<User> {
-    return await this.usersService.findUserByUsername(username);
+  findUserByUsername(@Param('username') username: string): Promise<User> {
+    return this.usersService.findUserByUsername(username);
   }
 
   @Get('me/wishes')
-  async findMyWishes(@Req() req): Promise<Wish[]> {
-    return this.wishesService.findWishesByOwner(req.user.id);
+  findMyWishes(@Req() req): Promise<Wish[]> {
+    return this.usersService.findUserWishes(req.user.id);
   }
 
   @Get(':username/wishes')
@@ -46,20 +46,20 @@ export class UsersController {
       @Param('username') username: string,
   ): Promise<Wish[]> {
     const user = await this.usersService.findUserByUsername(username);
-    return this.wishesService.findWishesByOwner(user.id);
+    return this.usersService.findUserWishes(user.id);
   }
 
   @Post('find')
-  async findManyUsers(@Body() user): Promise<User[]> {
-    return this.usersService.findManyUsers(user);
+  findManyUsers(@Body() user) {
+    return this.usersService.findMany(user);
   }
 
   @UseGuards(JwtGuard)
   @Patch('me')
-  async updateMyProfile(
+  updateMyProfile(
       @Req() req,
       @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
+  ) {
     return this.usersService.updateUserById(req.user.id, updateUserDto);
   }
 }
